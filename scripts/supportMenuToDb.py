@@ -6,19 +6,19 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Table
 
 Base = declarative_base()
 
-dish_ingredient = Table(
-    'dish_ingredient',
-    Base.metadata,
-    Column('dish_id', Integer, ForeignKey('dish.id')),
-    Column('ingredient_name', String)
-)
+# dish_ingredient = Table(
+#     'dish_ingredient',
+#     Base.metadata,
+#     Column('dish_id', Integer, ForeignKey('dish.id')),
+#     Column('ingredient_name', String)
+# )
 
-dish_technique = Table(
-    'dish_technique',
-    Base.metadata,
-    Column('dish_id', Integer, ForeignKey('dish.id')),
-    Column('technique_name', String)
-)
+# dish_technique = Table(
+#     'dish_technique',
+#     Base.metadata,
+#     Column('dish_id', Integer, ForeignKey('dish.id')),
+#     Column('technique_name', String)
+# )
 
 menu_dish = Table(
     'menu_dish',
@@ -56,6 +56,7 @@ class RestaurantDB(Base):
     chef_id = Column(Integer, ForeignKey('chef.id'))
 
     chef = relationship("ChefDB", back_populates="restaurants")
+    menus = relationship("MenuDB", back_populates="restaurant")
 
 
 class DishDB(Base):
@@ -63,11 +64,38 @@ class DishDB(Base):
     __tablename__ = 'dish'
 
     id = Column(Integer, primary_key=True)
+    name = Column(String)
 
-    ingredients = relationship('DishIngredient', secondary=dish_ingredient)
-    techniques = relationship('DishTechnique', secondary=dish_technique)
+    # One-to-many relationships for ingredients and techniques
+    ingredients = relationship("DishIngredientDB", back_populates="dish", cascade="all, delete-orphan")
+    techniques = relationship("DishTechniqueDB", back_populates="dish", cascade="all, delete-orphan")
 
+    # Relationship with Menu through junction table
     menus = relationship('MenuDB', secondary=menu_dish, back_populates='dishes')
+
+
+class DishIngredientDB(Base):
+    """SQLAlchemy model for dish ingredients"""
+    __tablename__ = 'dish_ingredient'
+
+    id = Column(Integer, primary_key=True)
+    dish_id = Column(Integer, ForeignKey('dish.id'))
+    ingredient_name = Column(String)
+
+    # Relationship with Dish
+    dish = relationship("DishDB", back_populates="ingredients")
+
+
+class DishTechniqueDB(Base):
+    """SQLAlchemy model for dish techniques"""
+    __tablename__ = 'dish_technique'
+
+    id = Column(Integer, primary_key=True)
+    dish_id = Column(Integer, ForeignKey('dish.id'))
+    technique_name = Column(String)
+
+    # Relationship with Dish
+    dish = relationship("DishDB", back_populates="techniques")
 
 
 class MenuDB(Base):
@@ -80,6 +108,7 @@ class MenuDB(Base):
     # Relationships
     restaurant = relationship("RestaurantDB", back_populates="menus")
     dishes = relationship("DishDB", secondary=menu_dish, back_populates='menus')
+    
 
 
 def create_tables(engine):
@@ -114,15 +143,17 @@ def pydantic_to_db(restaurant_pydantic):
 def pydantic_Menu_to_db(menu_pydantic, restaurant_db):
     dishes_db = []
     for dish_pydantic in menu_pydantic.dishes:
-        dish_db = DishDB()
+        dish_db = DishDB(name=dish_pydantic.name)
 
         # Add ingredients
         for ingredient in dish_pydantic.ingredients:
-            dish_db.ingredients.append({'ingredient_name': ingredient})
+            ingredient_db = DishIngredientDB(ingredient_name=ingredient)
+            dish_db.ingredients.append(ingredient_db)
 
         # Add techniques
         for technique in dish_pydantic.techniques:
-            dish_db.techniques.append({'technique_name': technique})
+            technique_db = DishTechniqueDB(technique_name=technique)
+            dish_db.techniques.append(technique_db)
 
         dishes_db.append(dish_db)
 

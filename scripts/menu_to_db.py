@@ -31,8 +31,10 @@ class Chef(BaseModel):
     luce: int = Field(description="Light ability level")
 
 
+
 class Dish(BaseModel):
     """Representation of a Dish"""
+    name: str = Field(description="Name of the dish")
     ingredients: list[str] = Field(description="List of the ingredients in the dish")
     techniques: list[str] = Field(description="List of the techniques used to prepare the dish")
 
@@ -45,7 +47,7 @@ class Menu(BaseModel):
 
 class Restaurant(BaseModel):
     """Representation of a Restaurant, including its chef."""
-    restaurantName: str = Field(description="Name of the restaurant")
+    name: str = Field(description="Name of the restaurant")
     planet: str = Field(description=f"Planet where the restaurant is located, these are the possible values: {planet_str}")
     chef: Chef = Field(description="Chef of the restaurant")
     # menu: Menu = Field(default_factory=Menu, description="Menu of the restaurant")
@@ -79,7 +81,7 @@ llm = ChatOpenAI(
 # print(ibm_api_key)
 # print(team_id)
 
-engine = create_engine('sqlite:///restaurants2.db', echo=True)
+engine = create_engine('sqlite:///restaurants7.db', echo=True)
 create_tables(engine)
 session = Session(engine)
 
@@ -120,7 +122,7 @@ session = Session(engine)
 
 ### Processing CHEF
 processedDocumentsPath = "Markdown/ProcessedDocuments"
-for fold_doc in tqdm(os.listdir(processedDocumentsPath)[:2]):
+for fold_doc in tqdm(os.listdir(processedDocumentsPath)[3:4]):
     docs = os.listdir(f"{processedDocumentsPath}/{fold_doc}")
     chef_doc = next((doc for doc in docs if doc.endswith("_CHEF.md")), None)
     if chef_doc:
