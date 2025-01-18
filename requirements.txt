@@ -1,0 +1,8 @@
+docling
+ibm-watsonx-ai
+langchain
+langchain-ibm
+pydantic 
+langgraph
+langchain_community
+langchain_core
