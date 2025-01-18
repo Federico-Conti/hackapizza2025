@@ -6,3 +6,6 @@ pydantic
 langgraph
 langchain_community
 langchain_core
+chromadb
+fitz
+PyMuPDF
