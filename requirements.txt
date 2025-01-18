@@ -9,3 +9,4 @@ langchain_core
 chromadb
 fitz
 PyMuPDF
+langchain-groq
