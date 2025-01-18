@@ -1,42 +1,62 @@
 from chromadb.config import Settings
 from chromadb import Client
-import numpy as np
-from langchain.embeddings import OpenAIEmbeddings
+import json
+from embedded import process_embeddings
 
-# Initialize Chroma client
-client = Client(Settings(
-    persist_directory="db_directory",  # Directory to store the database
-    chroma_db_impl="duckdb+parquet",   # Storage backend
-))
+class SearchClient:
+    def __init__(self):
+        """Initialize Chroma client and collection."""
+        self.client = Client(
+            persist_directory="../../v_db",  # Directory to store the database
+            chroma_db_impl="duckdb+parquet",  # Storage backend
+        )
+        self.collection = self.client.get_or_create_collection(
+            name="vector_compliance",
+            metadata={"description": "A collection for storing content and embedding compliance knowledge"}
+        )
+        print("Initialized Chroma client and collection.")
 
-# Create or get a collection
-collection_name = "my_vector_collection"
-collection = client.get_or_create_collection(
-    name=collection_name,
-    metadata={"description": "A collection for storing content and embeddings"}
-)
+    def add_data_to_collection(self, file_path):
+        """Load documents from a file and add them to the Chroma collection."""
+        with open(file_path, "r") as file:
+            documents = json.load(file)
+        print(f"Loaded {len(documents)} documents from {file_path}.")
 
-# Example data
-documents = [
-    {"id": "1", "content": "This is the first document.", "embedding": np.random.rand(768).tolist()},
-    {"id": "2", "content": "Another document with different content.", "embedding": np.random.rand(768).tolist()},
-]
+        for doc in documents:
+            self.collection.add(
+                ids=[doc["id"]],
+                metadatas=[{"content": doc["content"]}],
+                embeddings=[doc["embedding"]]
+            )
+        print(f"Added {len(documents)} documents to the collection.")
 
-# Add data to the collection
-for doc in documents:
-    collection.add(
-        ids=[doc["id"]],
-        metadatas=[{"content": doc["content"]}],
-        embeddings=[doc["embedding"]]
-    )
+    def hybrid_search(self, query_text, query_embedding, n_results=5):
+        """Perform a hybrid search using both embeddings and keywords."""
+        results = self.collection.query(
+            query_embeddings=[query_embedding],
+            query_texts=[query_text],
+            n_results=n_results
+        )
+        return results
 
-# Query the collection
-query_embedding = np.random.rand(768).tolist()
-results = collection.query(
-    query_embeddings=[query_embedding],
-    n_results=5
-)
+if __name__ == "__main__":
+    # Initialize the search client
+    search_client = SearchClient()
+    search_client.add_data_to_collection("../../Data/CodiceGalattico/embeddings.json")
+    # Add data to the collection (example usage, provide the path to your data file)
+    # search_client.add_data_to_collection("data.json")
 
-# Print query results
-for result in results['documents']:
-    print("Found document:", result)
+
+
+    # Example user input for a hybrid query
+    user_query = "compliance requirements for data storage"
+    user_query_emb = process_embeddings([user_query])
+    print(user_query_emb)
+    
+    # # Perform the hybrid search
+    # search_results = search_client.hybrid_search(query_text=user_query, query_embedding=user_query_emb, n_results=5)
+
+    # # Print the results
+    # for document, metadata in zip(search_results['documents'], search_results['metadatas']):
+    #     print("Found document:", document)
+    #     print("Metadata:", metadata)
