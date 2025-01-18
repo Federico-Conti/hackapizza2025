@@ -127,8 +127,8 @@ def pydantic_to_db(restaurant_pydantic):
         antimateria=restaurant_pydantic.chef.antimateria,
         magnetica=restaurant_pydantic.chef.magnetica,
         quantistica=restaurant_pydantic.chef.quantistica,
-        luce=restaurant_pydantic.chef.luce
-        #qui
+        luce=restaurant_pydantic.chef.luce,
+        livello_tecnologico=restaurant_pydantic.chef.livelloTecnologico
     )
 
     # Then create the restaurant

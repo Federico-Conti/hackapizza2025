@@ -22,15 +22,14 @@ planet_str = ', '.join([f'element{i+1}' for i in range(len(planetNames))])
 class Chef(BaseModel):
     """Representation of a Chef with various skills."""
     name: str = Field(description="Name of the chef")
-    psionica: int = Field(description="Psionic ability level")
-    temporale: int = Field(description="Temporal ability level")
-    gravitazionale: int = Field(description="Gravitational ability level")
-    antimateria: int = Field(description="Antimatter ability level")
-    magnetica: int = Field(description="Magnetic ability level")
-    quantistica: int = Field(description="Quantum ability level")
-    luce: int = Field(description="Light ability level")
-    #qui
-
+    psionica: int = Field(description="Psionic ability level (P)")
+    temporale: int = Field(description="Temporal ability level (t)")
+    gravitazionale: int = Field(description="Gravitational ability level (G)")
+    antimateria: int = Field(description="Antimatter ability level (e+)")
+    magnetica: int = Field(description="Magnetic ability level (Mx)")
+    quantistica: int = Field(description="Quantum ability level (Q)")
+    luce: int = Field(description="Light ability level (c)")
+    livelloTecnologico: int = Field(description="Livello di Sviluppo Tecnologico (LTK)")
 
 
 class Dish(BaseModel):

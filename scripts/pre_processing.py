@@ -14,6 +14,7 @@ class FilterType(Enum):
     PIANETA = "PIANETA"
     TECNICA = "TECNICA"
     INGREDIENTE = "INGREDIENTE"
+    DISTANZA = "DISTANZA"
     ALTRO = "ALTRO"
 
 # Credenziali per il modello Watsonx
@@ -63,6 +64,7 @@ def process_query(query: str) -> Tuple[Dict[str, bool], List[str]]:
             "PIANETA": false,
             "TECNICA": true,
             "INGREDIENTE": false,
+            "DISTANZA":false,
             "ALTRO": false
         }},
         "keywords": ["Fermentazione Quantico Biometrica", "Affumicatura tramite Big Bang Microcosmico", "Cottura Sottovuoto Frugale Energeticamente Negativa"]
@@ -88,3 +90,7 @@ def process_query(query: str) -> Tuple[Dict[str, bool], List[str]]:
         keywords = []
     
     return filters, keywords
+
+print(process_query("""
+Quali piatti, preparati utilizzando almeno una tecnica di taglio citata nel di Sirius Cosmo e che richiedono la licenza G di almeno grado 2 per essere cucinati, non utilizzano la Farina di Nettuno?
+"""))
