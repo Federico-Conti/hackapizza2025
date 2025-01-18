@@ -3,3 +3,4 @@
 .env.local
 env.download
 hackapizza-env
+chroma

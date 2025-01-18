@@ -7,6 +7,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 import json
 
+from docling.document_converter import DocumentConverter
+
+
 dotenv_path = '../../.env.local'
 load_dotenv(dotenv_path)
 ibm_api_key = os.getenv('IBM_API_KEY')
@@ -15,7 +18,7 @@ endpoint_url = os.getenv('ENDPOINT_URL')
 project_id = os.getenv('PROJECT_ID')
 
 class DocumentProcessor:
-    def __init__(self, doc_path, output_dir, chunk_size=500, chunk_overlap=20):
+    def __init__(self, doc_path, output_dir, chunk_size=1000, chunk_overlap=20):
         self.doc_path = doc_path
         self.output_dir = output_dir
         self.chunk_size = chunk_size
@@ -52,7 +55,10 @@ class DocumentProcessor:
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
             length_function=len,
-            is_separator_regex=False,
+            separators=[
+                          "#","##","###","."
+                            ],
+              
         )
         return text_splitter.split_text(text)
 

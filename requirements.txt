@@ -10,3 +10,4 @@ chromadb
 fitz
 PyMuPDF
 langchain-groq
+azure-search-documents
