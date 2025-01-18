@@ -29,6 +29,7 @@ class Chef(BaseModel):
     magnetica: int = Field(description="Magnetic ability level")
     quantistica: int = Field(description="Quantum ability level")
     luce: int = Field(description="Light ability level")
+    #qui
 
 
 

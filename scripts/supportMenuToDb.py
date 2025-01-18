@@ -128,6 +128,7 @@ def pydantic_to_db(restaurant_pydantic):
         magnetica=restaurant_pydantic.chef.magnetica,
         quantistica=restaurant_pydantic.chef.quantistica,
         luce=restaurant_pydantic.chef.luce
+        #qui
     )
 
     # Then create the restaurant
