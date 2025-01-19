@@ -1,3 +1,4 @@
+from azure.search.documents.models import VectorizedQuery
 import os
 from typing import Any
 from azure.search.documents import SearchClient
@@ -11,7 +12,7 @@ load_dotenv(override=True)
 # Constants for environment variables
 AZURE_SEARCH_SERVICE_ENDPOINT = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 AZURE_SEARCH_ADMIN_KEY = os.getenv("AZURE_SEARCH_ADMIN_KEY")
-AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT_2")
 AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
 AZURE_OPENAI_API_VERSION = "2024-10-01-preview"
 AZURE_OPENAI_EMBEDDING_DEPLOYED_MODEL_NAME = "ict-chatict_embeddingada002"
@@ -59,16 +60,24 @@ def generate_embeddings(text: str) -> Any:
         return response.data[0].embedding
     except Exception as e:
         raise RuntimeError(f"Error generating embeddings: {e}")
+    
+def retrive_sources(query:str):
+    query_embedding = generate_embeddings(query)
 
-if __name__ == "__main__":
-    try:
-        # Initialize the Search Client
-        search_client = getSearchClient()
-        print("Azure SearchClient initialized successfully:", search_client)
+    vector_query = VectorizedQuery(
+        vector=query_embedding, 
+        k_nearest_neighbors=50, 
+        fields="embedding"
+    )
 
-        # Example usage of embeddings generation
-        sample_text = "This is an example text for embedding generation."
-        embeddings = generate_embeddings(sample_text)
-        print("Generated embeddings:", embeddings)
-    except Exception as error:
-        print(f"An error occurred: {error}")
+    results = getSearchClient().search(
+        search_text=None,
+        vector_queries=[vector_query],
+        top=5
+    )
+    
+    results_list = list(results)
+    content = "\n".join(["Sources:\n " + doc['contet'] + "\n" for doc in results_list])
+    return content
+
+

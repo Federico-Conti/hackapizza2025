@@ -9,13 +9,13 @@ def main():
     # Inizializza l'agente SQL
     agente = AgentSQL()
     df=load_csv("domande.csv")
-    questions = df['Question'].tolist()[83:]
+    questions = df['Question'].tolist()[80:]
     row_ids = []
     responses=[]
-    # image_data = agente.graph.get_graph(xray=True).draw_mermaid_png()
-    # with open("graph.png", "wb") as file:
-    #     file.write(image_data)
-    id=1
+    image_data = agente.graph.get_graph(xray=True).draw_mermaid_png()
+    with open("graph.png", "wb") as file:
+        file.write(image_data)
+    id=81
     for question in questions:
         initial_state = {
         "question": question,
@@ -28,7 +28,7 @@ def main():
         debug = None  # Enable debugging if needed
         kwargs = {}  # Additional keyword arguments if required
         result=agente.graph.invoke(initial_state)
-        ids = []
+        ids = result["ids"]
         if isinstance(ids, list):
             if len(ids)>1:
                 result_str = ",".join(map(str, ids))  # Concatena i valori della lista
@@ -49,7 +49,7 @@ def main():
         })
 
     # Salva il DataFrame in un file CSV
-        output_df.to_csv("output_test.csv", index=False)
+        output_df.to_csv("output_test3.csv", index=False)
         
         
 def load_csv(file_path):
