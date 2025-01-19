@@ -1,0 +1,52 @@
+## Capitolo 1: Abilità e Licenze Richieste
+
+Prima di iniziare a cucinare nello spazio, è fondamentale ottenere le giuste autorizzazioni e raggiungere le giuste abilità. Non ci si può semplicemente mettere ai fornelli gravitazionali senza essere certificati: ci sono normative severe che regolano ogni fase della preparazione e gestione del cibo a bordo di una nave spaziale. Ovviamente, non ho mai cucinato senza la giusta licenza (non lo farei mai per nessun motivo).
+
+Vediamo insieme le principali categorie e le relative licenze richieste.
+
+## Psionica (P)
+
+- Livello 0: Posseduta da tutti se non diversamente specificato. Tipica degli esseri senzienti. Livello I: lettura pensiero, telecinesi e teletrasporto di oggetti di massa inferiore a 5 kg,
+- 20 kg, manipolazione delle forze fondamentali dell'universo Livello III: capacità di donare la coscienza e l'intelletto ad oggetti, manipolazione della realtà circoscritta a stanze, teletrasporto senza errore in qualsiasi dimensione temporale, comunione con
+- precognizione e visione del passato fino a 5 minuti Livello II: manipolazione della probabilità, telecinesi e teletrasporto di oggetti di massa inferiore a
+- entità di altri piani
+- Livello IV: proiezione astrale, riscrittura di realtà circoscritta a piccole nazioni o asteroidi Livello V: riscrittura di realtà di intere linee temporali o galassie. Questo livello è equivalente al Grado di influenza di livello tecnologico III (LTK III)
+
+## Temporale (t)
+
+- Livello II: Livello I + effetti temporali che riguardano linee temporali future Livello III: Livello II + effetti temporali che riguardano linee temporali passate
+- Livello I: effetti temporali relativi al presente come dilatazione o accelerazione del tempo
+
+## Gravitazionale (G)
+
+- Livello 0:
+- 5 < G ≤ 10, posseduta da tutti se non diversamente specificato
+- Livello II: 0 < G ≤ 10^6 Livello III: G > 10^6
+- Livello I: 0 < G ≤ 100
+
+## Antimateria (e+)
+
+- particelle, posseduta da tutti se non diversamente specificato
+- Livello 0: Livello I: antiparticelle
+
+## Magnetica (Mx)
+
+- Polo nord e sud, posseduta da tutti se non diversamente specificato
+- Livello 0: Livello I: Mono-polo
+
+## Quantistica (Q)
+
+- Livello n: Numero di stati in superposizione dove n è il numero di stati
+
+## Luce (c)
+
+- Livello II: Livello III: Tutte le frequenze
+- Livello I: Solo colori primari (RGB) Tutto lo spettro visibile umano
+
+## Livello di Sviluppo Tecnologico (LTK)
+
+- Livello I: Planetario Livello II: Sistema Stellare
+- Livello IV: Livello V: Intero Universo
+- Livello III: Galassia Superamasso di Galassie
+- Livello VI: Universi multipli Livello VI+: Tutte le fonti energia
+

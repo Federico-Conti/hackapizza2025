@@ -1,43 +1,32 @@
 import os
-from docling.document_converter import DocumentConverter
-from tqdm import tqdm
+import os
+import pandas as pd
 
-# Percorso del file sorgente e della directory di output
-source = "Data/Misc/Manuale di Cucina.pdf"
-dir_output = "Markdown"
 
-# Creazione della directory di output se non esiste
-os.makedirs(dir_output, exist_ok=True)
+# Funzione per dividere il contenuto del file in sotto-file
+def split_file(input_file):
+    # Apriamo il file di input
+    with open(input_file, 'r', encoding='utf-8') as file:
+        content = file.read()
 
-converter = DocumentConverter()
+    # Troviamo tutte le sezioni che iniziano con '## Capitolo'
+    chapters = content.split('## Capitolo')
 
-print("Convertendo il documento...")
-result = converter.convert(source)
-text = result.document.export_to_markdown()
+    # Creiamo una cartella per i sotto-file
+    output_dir = 'capitoli'
+    os.makedirs(output_dir, exist_ok=True)
 
-# Divide il documento ogni volta che incontra un titolo contenente "Capitolo"
-print("Dividendo il documento in sezioni...")
-sections = text.splitlines()  # Divide il testo in righe
-current_section = []
-section_count = 0
+    # Scriviamo ogni capitolo in un file separato
+    for i, chapter in enumerate(chapters[1:], start=1):
+        chapter_title = f"Capitolo_{i}"
+        output_file = os.path.join(output_dir, f"{chapter_title}.txt")
+        
 
-for line in tqdm(sections, desc="Processando linee"):
-    if "Capitolo" in line:  # Controlla se la linea contiene la parola "Capitolo"
-        # Salva la sezione corrente (se esiste)
-        if current_section:
-            section_count += 1
-            section_filename = os.path.join(dir_output, f"Capitolo_{section_count}.txt")
-            with open(section_filename, "w", encoding="utf-8") as f:
-                f.write("\n".join(current_section))
-            current_section = []  # Resetta la sezione corrente
-    # Aggiungi la linea alla sezione corrente
-    current_section.append(line)
+        with open(output_file, 'w', encoding='utf-8') as out_file:
+            out_file.write(f"## Capitolo{chapter}")
+        
+        print(f"Scritto {output_file}")
 
-# Salva l'ultima sezione (se esiste)
-if current_section:
-    section_count += 1
-    section_filename = os.path.join(dir_output, f"Capitolo_{section_count}.txt")
-    with open(section_filename, "w", encoding="utf-8") as f:
-        f.write("\n".join(current_section))
-
-print(f"Divisione completata. Salvate {section_count} sezioni nella directory '{dir_output}'.")
+# Eseguiamo la funzione
+input_file = 'Markdown/Manuale di Cucina.txt'
+split_file(input_file)
