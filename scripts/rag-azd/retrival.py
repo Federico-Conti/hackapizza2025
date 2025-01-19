@@ -19,3 +19,5 @@ def retrive_sources(query:str):
     results_list = list(results)
     content = "\n".join(["Sources:\n " + doc['contet'] + "\n" for doc in results_list])
     return content
+
+

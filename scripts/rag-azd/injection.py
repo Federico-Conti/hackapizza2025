@@ -46,6 +46,7 @@ class DocumentProcessor:
         return text_splitter.split_text(text)
 
     def getChunks(self):
+         chunks=[]
          for txt_file in tqdm(os.listdir(self.output_dir)):
             if not txt_file.endswith('.txt'):
                 continue
@@ -54,16 +55,22 @@ class DocumentProcessor:
             with open(file_path, "r", encoding="utf-8") as f:
                 text = f.read()
 
-            chunks = self.split_text(text)
-            return chunks
-        
+            chunks_one_doc = self.split_text(text)
+            chunks.extend(chunks_one_doc)
+         return chunks
+      
+    def sanitize_key(self,key):
+        # Base64 encode the key to make it safe
+        return base64.urlsafe_b64encode(key.encode('utf-8')).decode('utf-8')
+
     def process_embeddings(self):
             chunks = self.getChunks()
             for i, chunk in enumerate(chunks):
                 embedding_result = generate_embeddings(chunk)
+                doc_key = self.sanitize_key(f"{self.output_dir}_{i}")
                 print(f"Embd of: {i}")
                 result = getSearchClient().upload_documents(documents=[{
-                    "id": str(i),
+                    "id": doc_key,
                     "contet": chunk,
                     "embedding": embedding_result
                 }])
@@ -71,8 +78,11 @@ class DocumentProcessor:
      
 if __name__ == "__main__":
     doc_path = "../../Data/CodiceGalattico"
-    output_dir = "../../Data/CodiceGalattico"
+    output_dir = "../../Markdown/CodiceGalattico" #24 chunk
     
-    processor = DocumentProcessor(doc_path, output_dir)
-    processor.convert_documents()
+    doc_path2 = "../../Data/Menu"
+    output_dir2 = "../../Markdown/Menu" # chunk
+    
+    processor = DocumentProcessor(doc_path2, output_dir2)
+    # processor.convert_documents()
     processor.process_embeddings()
