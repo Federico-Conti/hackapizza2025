@@ -9,7 +9,7 @@ def main():
     # Inizializza l'agente SQL
     agente = AgentSQL()
     df=load_csv("domande.csv")
-    questions = df['Question'].tolist()
+    questions = df['Question'].tolist()[82:]
     row_ids = []
     responses=[]
     # image_data = agente.graph.get_graph(xray=True).draw_mermaid_png()
@@ -28,11 +28,14 @@ def main():
         debug = None  # Enable debugging if needed
         kwargs = {}  # Additional keyword arguments if required
         result=agente.graph.invoke(initial_state)
-        ids = result["ids"]
+        ids = []
         if isinstance(ids, list):
-            result_str = ",".join(map(str, ids))  # Concatena i valori della lista
-        else:
-            result_str = str(ids)  # Converte direttamente il valore singolo in stringa
+            if len(ids)>1:
+                result_str = ",".join(map(str, ids))  # Concatena i valori della lista
+            elif len(ids)==1:
+                result_str = str(ids[0])
+            else:
+                result_str="1"
         responses.append(result_str)
         row_ids.append(id)
         print(id)
@@ -46,7 +49,7 @@ def main():
         })
 
     # Salva il DataFrame in un file CSV
-        output_df.to_csv("output.csv", index=False)
+        output_df.to_csv("output_test.csv", index=False)
         
         
 def load_csv(file_path):
