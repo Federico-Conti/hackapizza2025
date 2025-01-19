@@ -19,3 +19,12 @@ def retrive_sources(query:str):
     results_list = list(results)
     content = "\n".join(["Sources:\n " + doc['contet'] + "\n" for doc in results_list])
     return content
+<<<<<<< HEAD
+=======
+
+print(retrive_sources(
+    """
+    Quali piatti creati con almeno una tecnica di taglio dal Manuale di Cucina di Sirius Cosmo e che necessitano della licenza t non base per la preparazione, escludendo quelli con Fusilli del Vento, sono serviti?
+    """
+))
+>>>>>>> 66ae980 (modifiche varie)
