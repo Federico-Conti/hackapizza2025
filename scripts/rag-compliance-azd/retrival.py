@@ -1,5 +1,5 @@
 from azure.search.documents.models import VectorizedQuery
-from setting import generate_embeddings, search_client
+from setting import generate_embeddings, getSearchClient
 
 def retrive_sources(query:str):
     query_embedding = generate_embeddings(query)
@@ -10,7 +10,7 @@ def retrive_sources(query:str):
         fields="embedding"
     )
 
-    results = search_client.search(
+    results = getSearchClient().search(
         search_text=None,
         vector_queries=[vector_query],
         top=3
@@ -19,4 +19,3 @@ def retrive_sources(query:str):
     results_list = list(results)
     content = "\n".join(["Sources:\n " + doc['contet'] + "\n" for doc in results_list])
     return content
-

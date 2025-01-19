@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 import json
-from setting import generate_embeddings, search_client
+from setting import generate_embeddings, getSearchClient
 import base64
 from docling.document_converter import DocumentConverter
 
@@ -64,7 +64,7 @@ class DocumentProcessor:
                 encoded_id = self.encode_key(f"{txt_file}_{i}")
                 embedding_result = generate_embeddings(chunk)
                 print(f"Embd of: {i}")
-                result = search_client.upload_documents(documents=[{
+                result = getSearchClient().upload_documents(documents=[{
                     "id": encoded_id,
                     "contet": chunk,
                     "embedding": embedding_result
