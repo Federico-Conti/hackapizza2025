@@ -19,6 +19,7 @@ planetNames = list(df.columns)
 planetNames.pop(0)
 planet_str = ', '.join([f'element{i+1}' for i in range(len(planetNames))])
 
+
 class Chef(BaseModel):
     """Representation of a Chef with various skills."""
     name: str = Field(description="Name of the chef")
@@ -30,7 +31,6 @@ class Chef(BaseModel):
     quantistica: int = Field(description="Quantum ability level (Q)")
     luce: int = Field(description="Light ability level (c)")
     livelloTecnologico: int = Field(description="Livello di Sviluppo Tecnologico (LTK)")
-
 
 class Dish(BaseModel):
     """Representation of a Dish"""
