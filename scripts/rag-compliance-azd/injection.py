@@ -29,7 +29,7 @@ class DocumentProcessor:
             source = f"{self.doc_path}/{doc_}"
             converter = DocumentConverter()
             result = converter.convert(source)
-            text = result.document.export_to_markdown()  # Output
+            text = result.document.export_to_markdown() 
 
             # Explicitly set encoding to utf-8
             with open(output_file, "w", encoding="utf-8") as f:
@@ -40,17 +40,13 @@ class DocumentProcessor:
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
             length_function=len,
-            separators=["#","##","###"],
+            separators=["#","##"],
               
         )
         return text_splitter.split_text(text)
 
-    def encode_key(self,key):
-        # Encode the key in URL-safe Base64
-        return base64.urlsafe_b64encode(key.encode()).decode().rstrip("=")
-    
-    def process_embeddings(self):
-        for txt_file in tqdm(os.listdir(self.output_dir)):
+    def getChunks(self):
+         for txt_file in tqdm(os.listdir(self.output_dir)):
             if not txt_file.endswith('.txt'):
                 continue
 
@@ -59,13 +55,15 @@ class DocumentProcessor:
                 text = f.read()
 
             chunks = self.split_text(text)
-
+            return chunks
+        
+    def process_embeddings(self):
+            chunks = self.getChunks()
             for i, chunk in enumerate(chunks):
-                encoded_id = self.encode_key(f"{txt_file}_{i}")
                 embedding_result = generate_embeddings(chunk)
                 print(f"Embd of: {i}")
                 result = getSearchClient().upload_documents(documents=[{
-                    "id": encoded_id,
+                    "id": str(i),
                     "contet": chunk,
                     "embedding": embedding_result
                 }])
@@ -74,8 +72,7 @@ class DocumentProcessor:
 if __name__ == "__main__":
     doc_path = "../../Data/CodiceGalattico"
     output_dir = "../../Data/CodiceGalattico"
-
+    
     processor = DocumentProcessor(doc_path, output_dir)
     processor.convert_documents()
-    
     processor.process_embeddings()
