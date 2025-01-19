@@ -9,3 +9,4 @@ langchain_core
 langchain-groq
 azure-search-documents
 openai
+langchain_openai

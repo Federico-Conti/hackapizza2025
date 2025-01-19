@@ -14,7 +14,7 @@ from supportMenuToDb import Base, pydantic_to_db, pydantic_Menu_to_db
 from tqdm import tqdm
 
 
-df = pd.read_csv("Data/Misc/Distanze.csv")
+df = pd.read_csv("../Data/Misc/Distanze.csv")
 planetNames = list(df.columns)
 planetNames.pop(0)
 planet_str = ', '.join([f'element{i+1}' for i in range(len(planetNames))])
@@ -58,14 +58,13 @@ def create_tables(engine):
     Base.metadata.create_all(engine)
 
 
-dotenv_path = 'env.download'
-load_dotenv(dotenv_path)
+load_dotenv(override=True)
 
 # ibm_api_key = os.getenv('IBM_API_KEY')
 # team_id = os.getenv('TEAM_ID')
 # endpoint_url = os.getenv('ENDPOINT_URL')
 # project_id = os.getenv('PROJECT_ID')
-groq_api_key = os.getenv('GROQ_API_KEY')
+
 
 
 # llm = ChatGroq(
@@ -81,7 +80,7 @@ llm = ChatOpenAI(
 # print(ibm_api_key)
 # print(team_id)
 
-engine = create_engine('sqlite:///restaurants7.db', echo=True)
+engine = create_engine('sqlite:///restaurants.db', echo=True)
 create_tables(engine)
 session = Session(engine)
 
@@ -121,8 +120,8 @@ session = Session(engine)
 
 
 ### Processing CHEF
-processedDocumentsPath = "Markdown/ProcessedDocuments"
-for fold_doc in tqdm(os.listdir(processedDocumentsPath)[3:4]):
+processedDocumentsPath = "../Markdown/ProcessedDocuments"
+for fold_doc in tqdm(os.listdir(processedDocumentsPath)):
     docs = os.listdir(f"{processedDocumentsPath}/{fold_doc}")
     chef_doc = next((doc for doc in docs if doc.endswith("_CHEF.md")), None)
     if chef_doc:
