@@ -60,15 +60,14 @@ def generate_embeddings(text: str) -> Any:
     except Exception as e:
         raise RuntimeError(f"Error generating embeddings: {e}")
 
-if __name__ == "__main__":
-    try:
-        # Initialize the Search Client
-        search_client = getSearchClient()
-        print("Azure SearchClient initialized successfully:", search_client)
-
-        # Example usage of embeddings generation
-        sample_text = "This is an example text for embedding generation."
-        embeddings = generate_embeddings(sample_text)
-        print("Generated embeddings:", embeddings)
-    except Exception as error:
-        print(f"An error occurred: {error}")
+# if __name__ == "__main__":
+#     try:
+#         # Initialize the Search Client
+#         search_client = getSearchClient()
+#         print("Azure SearchClient initialized successfully:", search_client)
+#         # Example usage of embeddings generation
+#         sample_text = "This is an example text for embedding generation."
+#         embeddings = generate_embeddings(sample_text)
+#         print("Generated embeddings:", embeddings)
+#     except Exception as error:
+#         print(f"An error occurred: {error}")

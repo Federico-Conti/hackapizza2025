@@ -9,7 +9,7 @@ def main():
     # Inizializza l'agente SQL
     agente = AgentSQL()
     df=load_csv("domande.csv")
-    questions = df['Question'].tolist()[82:]
+    questions = df['Question'].tolist()[83:]
     row_ids = []
     responses=[]
     # image_data = agente.graph.get_graph(xray=True).draw_mermaid_png()

@@ -2,6 +2,7 @@ from azure.search.documents.models import VectorizedQuery
 from scripts.ragcomplianceazd import setting
 
 def retrive_sources(query:str):
+    print("QUERYYYY ",query)
     query_embedding = setting.generate_embeddings(query)
 
     vector_query = VectorizedQuery(

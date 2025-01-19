@@ -131,7 +131,7 @@ class AgentSQL():
         Answer:
         """
         structured_llm_outputter = llm.with_structured_output(RAGModel)
-        query_data=f"""{state["question"]} \n {state["generation"]}"""
+        query_data=state["question"]
         retrieved_docs = retrival.retrive_sources(query_data)
         messages = prompt_template.invoke({"question": state["question"],"output": state["generation"],"context": docs_content})
         response = structured_llm_outputter.invoke(messages)
@@ -140,7 +140,6 @@ class AgentSQL():
 
     def rag_node(self,state):
         result=self.rag(state).invoke({"question":state["question"],"generation":state["generation"]})
-        print("RESULT",result)
         return {"generation": result}
 
         
