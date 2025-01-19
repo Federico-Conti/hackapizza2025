@@ -33,13 +33,18 @@ with open(file_path, 'r', encoding='utf-8') as file:
 class AgentState(TypedDict):
     question:str
     generation:str
-    names:List[str]
+    names:list[str]
     ids:Annotated[list, operator.add]
 
 class DishNames(BaseModel):
     names:list[str]= Field(
         description="Names of all dishes into the generated text"
     )
+class SQLData(BaseModel):
+    generation:list[str]= Field(
+        description="Sentence that has the tool data"
+    )
+
 
 class AgentSQL():
     def __init__(self):
@@ -49,7 +54,7 @@ class AgentSQL():
         workflow.add_node("get_names",self.get_name_node)
         workflow.add_node("get_ids",self.get_ids)
         
-        workflow.set_entry_point("answer_with_sql")
+        workflow.add_edge(START,"answer_with_sql")
         workflow.add_edge("answer_with_sql","get_names")
         workflow.add_edge("get_names","get_ids")
         workflow.add_edge("get_ids",END)
@@ -61,6 +66,7 @@ class AgentSQL():
     def answer_sql(self,state):
         toolkit = SQLDatabaseToolkit(db=db, llm=llm)
         schema = db.get_table_info()
+        structured=llm.with_structured_output(SQLData)
         prompt_template = """
         You are an agent designed to interact with a SQL database.
 
@@ -82,21 +88,24 @@ class AgentSQL():
 
         Then you should query the schema of the most relevant tables.
         """
-        system_message = prompt_template.format(dialect="SQLite", top_k=100,schema=schema,)
+        system_message = prompt_template.format(dialect="SQLite", top_k=100,schema=schema)
 
         agent_executor = create_react_agent(
             llm, toolkit.get_tools(), state_modifier=system_message
         )
+        
+        
         example_query=state["question"]
-        result=agent_executor.invoke(input=example_query)["output"]
+        result=agent_executor.invoke({"messages":[("user", example_query)]})
+        print("result",result)
         return {"generation":result}
     
     def get_name_node(self,state):
         
-        result=get_names(self).invoke({"question":state["question"],"generation":state["generation"]})
-    
+        result=self.get_names().invoke({"question":state["question"],"generation":state["generation"]})
+
         return {"names":result.names}
-    def  get_names(self,):
+    def get_names(self):
         structured_llm_grader = llm.with_structured_output(DishNames)
 
         # Prompt
@@ -108,10 +117,11 @@ class AgentSQL():
             ]
         )
 
-        return answer_prompt | structured_llm_grader
+        return answer_prompt | structured_llm_graderd
         
     def get_ids(self,state):
-        return {"ids": [dishes_data[name] for name in state["names"] if name in dishes_data]}
+        a={"ids": [dishes_data[name] for name in state["names"]]}
+        return a
 
 
     
