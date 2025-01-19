@@ -6,7 +6,7 @@ from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
-load_dotenv()
+load_dotenv("../../.env.local")
 
 # Load environment variables
 AZURE_SEARCH_SERVICE_ENDPOINT = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
