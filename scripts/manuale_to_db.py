@@ -22,11 +22,13 @@ load_dotenv(override=True)
 class ChildTechnique(BaseModel):
     name: str = Field(description="Name of the childTechnique")
 
-
 class ParentTechnique(BaseModel):
-    """Representation of a ParentTechnique with all the child techniques"""
-    name: str = Field(description="The name of the parent technique, often followed by a brief description of its category.")
-    techniques: list[ChildTechnique] = Field(description="A list of associated child techniques, identified by their 'Vantaggi' (advantages) and 'Svantaggi' (disadvantages).")
+    name: str = Field(description=f"The name of the parent technique, often followed by a brief description of its category.")
+    techniques: list[ChildTechnique] = Field(description="A list containing subcategories with respect to the macrocategory.")
+
+
+class ListMacro(BaseModel):
+    macrocategories: list[str] = Field(description="The name of the macrocategory, often followed by a brief description of its category. It contains some subcategories.")
 
 
 llm = AzureChatOpenAI(
@@ -63,16 +65,39 @@ for file_ in tqdm(os.listdir(processedDocumentsPath)):
                     [START DOCUMENT]
                     {txt_}
                     [END DOCUMENT]
+                    You have to provide as answer a list containing all the macrocategory of the technique.
                     """,
                 )
             ]
 
-        model_structured = llm.with_structured_output(ParentTechnique)
-        answer = model_structured.invoke(msg)
-        print(answer)
+        model_structured = llm.with_structured_output(ListMacro)
+        answer_macrocategories = model_structured.invoke(msg)
+        macrocategories = answer_macrocategories.macrocategories
+        # print()
 
-        restaurant_db = pydantic_ParentTechnique_to_db(answer)
-        session.add(restaurant_db)
+        
+        for macro_cat in macrocategories:
+            print(macro_cat)
+            msg = [
+                    HumanMessage(
+                        content=f"""
+                        You're an expert document reader. Your role is to read the following document and to store important information using a structured
+                        ouput. 
+                        Here is the document that you have to process:
+                        [START DOCUMENT]
+                        {txt_}
+                        [END DOCUMENT]
+                        You have to find the parentTechnique and childTechnique associated to: {macro_cat}
+                        """,
+                    )
+                ]
+
+            model_structured = llm.with_structured_output(ParentTechnique)
+            answer = model_structured.invoke(msg)
+            print(answer)
+
+            technique_db = pydantic_ParentTechnique_to_db(answer)
+            session.add(technique_db)
 
         
 session.commit()

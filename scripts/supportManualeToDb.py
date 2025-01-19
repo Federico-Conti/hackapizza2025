@@ -14,21 +14,17 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Table
 
 Base = declarative_base()
 
-link_technique = Table(
-    'link_technique',
-    Base.metadata,
-    Column('parent_technique_id', Integer, ForeignKey('parent_technique.id')),
-    Column('child_technique_id', Integer, ForeignKey('child_technique.id'))
-)
-
 class ChildTechniqueDB(Base):
     """SQLAlchemy model for the ChildTechnique table"""
     __tablename__ = 'child_technique'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
+    parent_id = Column(Integer, ForeignKey('parent_technique.id'), nullable=False)
+
     # Relationship with ParentTechnique through junction table
-    parentTechniques = relationship('ParentTechniqueDB', secondary=link_technique, back_populates='child_techniques')
+    #parent_techniques = relationship('ParentTechniqueDB', secondary=link_technique, back_populates='child_techniques')
+    parent = relationship('ParentTechniqueDB', back_populates='child_techniques')
 
 
 class ParentTechniqueDB(Base):
@@ -36,20 +32,23 @@ class ParentTechniqueDB(Base):
     __tablename__ = 'parent_technique'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-
+    name = Column(String, unique=True, nullable=False)
     # Relationships
-    child_techniques = relationship('ChildTechniqueDB', secondary=link_technique, back_populates='parentTechniques')
+    # child_techniques = relationship('ChildTechniqueDB', secondary=link_technique, back_populates='parent_techniques')
+    child_techniques = relationship('ChildTechniqueDB', back_populates='parent', cascade='all, delete-orphan')
 
 
 # Funzione per la conversione da Pydantic a DB
 def pydantic_ParentTechnique_to_db(parent_technique_pydantic):
+
+    print(parent_technique_pydantic.name)
+
     child_techniques_db = []
     for child_technique_pydantic in parent_technique_pydantic.techniques:
         child_technique_db = ChildTechniqueDB(name=child_technique_pydantic.name)
         child_techniques_db.append(child_technique_db)
 
-    # Crea il parent technique
+        # Crea il parent technique
     parent_technique_db = ParentTechniqueDB(
         name=parent_technique_pydantic.name,
         child_techniques=child_techniques_db
