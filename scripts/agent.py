@@ -8,8 +8,9 @@ from typing import Any, Dict, List, Annotated, Sequence, TypedDict, Literal,Opti
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_ibm import WatsonxLLM
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI,AzureChatOpenAI
 from langchain_groq import ChatGroq
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 from langgraph.prebuilt import create_react_agent
 from dotenv import load_dotenv
 import operator
@@ -20,8 +21,8 @@ import os
 
 load_dotenv(override=True)
 db = SQLDatabase.from_uri("sqlite:///restaurants.db")
-llm = ChatOpenAI(
-    model="gpt-4o",  # "llama-3.3-70b-versatile",
+llm = AzureChatOpenAI(
+    deployment_name="gpt-4o-mini",  # "llama-3.3-70b-versatile",
     temperature=0,
 
 )
@@ -53,11 +54,12 @@ class AgentSQL():
         workflow.add_node("answer_with_sql",self.answer_sql)
         workflow.add_node("get_names",self.get_name_node)
         workflow.add_node("get_ids",self.get_ids)
-        
+        workflow.add_node("solver",self.solver)
         workflow.add_edge(START,"answer_with_sql")
         workflow.add_edge("answer_with_sql","get_names")
         workflow.add_edge("get_names","get_ids")
-        workflow.add_edge("get_ids",END)
+        workflow.add_edge("get_ids","solver")
+        workflow.add_edge("solver",END)
         
         self.graph = workflow.compile()
 
@@ -97,7 +99,6 @@ class AgentSQL():
         
         example_query=state["question"]
         result=agent_executor.invoke({"messages":[("user", example_query)]})
-        print("result",result)
         return {"generation":result}
     
     def get_name_node(self,state):
@@ -117,11 +118,14 @@ class AgentSQL():
             ]
         )
 
-        return answer_prompt | structured_llm_graderd
+        return answer_prompt | structured_llm_grader
         
     def get_ids(self,state):
-        a={"ids": [dishes_data[name] for name in state["names"]]}
+        a={"ids": [dishes_data[name] for name in state["names"] if name in dishes_data]}
         return a
+    def solver(self,state):
+        return {"messages":[AIMessage(content=str(state["ids"]))]}
+
 
 
     
